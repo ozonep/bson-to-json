@@ -3,10 +3,12 @@
     {
       "target_name": "bsonToJson",
       "sources": [
+        "lightweight_manual_reset_event.cpp",
         "bson-to-json.cc"
       ],
       "include_dirs": [
-        "<!@(node -p \"require('node-addon-api').include\")"
+        "<!@(node -p \"require('node-addon-api').include\")",
+        "deps/cppcoro/include"
       ],
       "dependencies": [
         "<!(node -p \"require('node-addon-api').gyp\")"
@@ -24,6 +26,7 @@
       ],
       "msvs_settings": {
         "VCCLCompilerTool": {
+          "AdditionalOptions": "/await /std:c++latest %(AdditionalOptions)",
           "EnableEnhancedInstructionSet": 3 # /arch:AVX
           # 0-not set, 1-sse, 2-sse2, 3-avx, 4-ia32, 5-avx2
         }

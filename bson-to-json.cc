@@ -11,6 +11,10 @@
 #include <mutex>
 #include <condition_variable>
 
+#include "cppcoro/task.hpp"
+#include "cppcoro/single_consumer_async_auto_reset_event.hpp"
+#include "cppcoro/sync_wait.hpp"
+
 #include <iostream>
 
 #ifdef _MSC_VER
@@ -181,11 +185,15 @@ public:
 
 		resize(chunkSize);
 
+		cppcoro::sync_wait([&]() -> cppcoro::task<> {
+			co_await drain;
+		}());
 		transcodeObject(isArray);
 	}
 
 	void resume() {
-		cv.notify_one();
+		// cv.notify_one();
+		drain.set();
 	}
 
 	bool isDone() {
@@ -204,6 +212,7 @@ private:
 	size_t inIdx = 0;
 	size_t inLen = 0;
 	Mode mode;
+	cppcoro::single_consumer_async_auto_reset_event drain{false};
 
 	int64_t readInt64LE() {
 		int64_t v = reinterpret_cast<const int64_t*>(in + inIdx)[0]; // (UB, LE)
@@ -247,10 +256,13 @@ private:
 			if (status)
 				std::quick_exit(status);
 		} else {
-			std::unique_lock<std::mutex> lk(m);
-			cv.notify_one();
-			//std::cout << "trans waiting..." << std::endl;
-			cv.wait(lk, [&] { return outIdx == 0; });
+			cppcoro::sync_wait([&]() -> cppcoro::task<> {
+				co_await drain;
+			}());
+			// std::unique_lock<std::mutex> lk(m);
+			// cv.notify_one();
+			// //std::cout << "trans waiting..." << std::endl;
+			// cv.wait(lk, [&] { return outIdx == 0; });
 		}
 	}
 
@@ -644,7 +656,7 @@ public:
 				fixedBuffer = options.Get("fixedBuffer").ToBoolean().Value();
 			}
 		}
-
+		
 		worker = std::thread { &Transcoder::transcode, &trans, arr.Data(), arr.ByteLength(), isArray, chunkSize, Transcoder::Mode::PAUSE };
 	}
 
@@ -670,12 +682,12 @@ private:
 				std::cout << "[final]";
 				rv.Set("done", true);
 				worker.join();
-				std::cout << "[joined]";
+				// std::cout << "[joined]";
 			} else {
-				std::unique_lock<std::mutex> lk(m);
+				// std::unique_lock<std::mutex> lk(m);
 				trans.outIdx = 0;
 				trans.resume();
-				trans.cv.wait(lk, [&] { return trans.outIdx > 0 || trans.isDone(); });
+				// trans.cv.wait(lk, [&] { return trans.outIdx > 0 || trans.isDone(); });
 				std::cout << "waited...";
 				if (trans.isDone()) {
 					std::cout << "[isDone!]";
@@ -685,7 +697,7 @@ private:
 				Napi::Buffer<uint8_t> buf;
 				if (fixedBuffer) {
 					// TODO we need to register this and let JS own it
-					buf = Napi::Buffer<uint8_t>::New(env, trans.out, trans.outIdx);
+					buf = Napi::Buffer<uint8_t>::Copy(env, trans.out, trans.outIdx);
 				} else {
 					buf = Napi::Buffer<uint8_t>::Copy(env, trans.out, trans.outIdx);
 				}
