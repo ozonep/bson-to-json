@@ -28,6 +28,7 @@
         "-std=c++17",
         "-fvisibility=hidden",
         "-march=native",
+        "-O3",
         "-falign-loops=32",
         "-Wno-unused-function", # CPU feature detection only used on Win
         "-Wno-unused-const-variable" # cpuid regs
