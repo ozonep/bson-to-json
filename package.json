@@ -1,6 +1,6 @@
 {
   "name": "ozonep-bson-to-json",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Direct BSON to JSON transcoder.",
   "repository": "https://github.com/zbjornson/bson-to-json",
   "author": "zbjornson",
