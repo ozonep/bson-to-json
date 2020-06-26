@@ -1,6 +1,8 @@
 try {
+	console.log("Impoerting C++ module");
 	module.exports = require("./build/Release/bsonToJson.node");
 } catch (ex) {
+	console.log("Error with C++, importing JS ver");
 	module.exports = require("./src/bson-to-json.js");
 }
 

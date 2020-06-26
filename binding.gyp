@@ -24,7 +24,7 @@
       "cflags":[
         "-std=c++17",
         "-fvisibility=hidden",
-        "-march=native",
+        "-march=skylake",
         "-O3",
         "-Wno-unused-function",
         "-Wno-unused-const-variable"
@@ -32,7 +32,7 @@
       "cflags_cc":[
         "-std=c++17",
         "-fvisibility=hidden",
-        "-march=native",
+        "-march=skylake",
         "-O3",
         "-Wno-unused-function",
         "-Wno-unused-const-variable"
