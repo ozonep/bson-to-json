@@ -14,44 +14,29 @@
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")"
       ],
-      "dependencies": [
-        "<!(node -p \"require('node-addon-api').gyp\")"
-      ],
       "defines": [
         "NAPI_DISABLE_CPP_EXCEPTIONS"
       ],
       "cflags_cc!": [
         # Unset Node.js v8's std.
-        "-std=gnu++0x"
+       "-std=gnu++1y"
       ],
       "cflags":[
         "-std=c++17",
         "-fvisibility=hidden",
         "-march=native",
         "-O3",
-        "-falign-loops=32",
-        "-Wno-unused-function", # CPU feature detection only used on Win
-        "-Wno-unused-const-variable" # cpuid regs
+        "-Wno-unused-function",
+        "-Wno-unused-const-variable"
       ],
-      "msvs_settings": {
-        "VCCLCompilerTool": {
-          "AdditionalOptions": [
-            "/std:c++17 %(AdditionalOptions)"
-            # c++17 for [[nodiscard]]
-          ],
-          "EnableEnhancedInstructionSet": 0 # /arch:
-          # 0-not set, 1-sse, 2-sse2, 3-avx, 4-ia32, 5-avx2
-          # Not set: spurious warning with /arch:SSE2, which is baseline anyway
-        }
-      },
-      "xcode_settings": {
-        "OTHER_CPLUSPLUSFLAGS": [
-          "-fvisibility=hidden",
-          "-march=native",
-          "-Wno-unused-function", # CPU feature detection only used on Win
-          "-Wno-unused-const-variable"
-        ]
-      }
+      "cflags_cc":[
+        "-std=c++17",
+        "-fvisibility=hidden",
+        "-march=native",
+        "-O3",
+        "-Wno-unused-function",
+        "-Wno-unused-const-variable"
+      ]
     }
   ]
 }
