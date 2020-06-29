@@ -24,16 +24,16 @@
       "cflags":[
         "-std=c++17",
         "-fvisibility=hidden",
-        "-march=skylake",
-        "-O3",
+        "-march=haswell",
+        "-Ofast",
         "-Wno-unused-function",
         "-Wno-unused-const-variable"
       ],
       "cflags_cc":[
         "-std=c++17",
         "-fvisibility=hidden",
-        "-march=skylake",
-        "-O3",
+        "-march=haswell",
+        "-Ofast",
         "-Wno-unused-function",
         "-Wno-unused-const-variable"
       ]

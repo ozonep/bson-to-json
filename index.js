@@ -12,17 +12,13 @@ const C_OPEN_SQ = Buffer.from("[");
 const C_COMMA = Buffer.from(",");
 const C_CLOSE_SQ = Buffer.from("]");
 
-/**
- * Writes the entire cursor to `ostr`, closing `ostr` when done.
- * @param {import("mongodb").Cursor} cursor
- * @param {import("stream").Writable} ostr
- */
-async function send(cursor, ostr) {
+async function send(cursor, ostr, response) {
 	cursor.rewind();
 
 	if (cursor.isDead())
 		throw new Error("Cursor is closed.");
 
+	ostr.pipe(response);
 	ostr.write(C_OPEN_SQ);
 
 	let rest = false;
@@ -35,8 +31,7 @@ async function send(cursor, ostr) {
 		let i = cursorState.cursorIndex;
 		while (i < documents.length - 1) {
 			const doc = documents[i++];
-			if (!doc)
-				break;
+			if (!doc) break;
 			ostr.write(bsonToJson(doc, false));
 			ostr.write(C_COMMA);
 		}
