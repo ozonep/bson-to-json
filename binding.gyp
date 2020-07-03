@@ -25,15 +25,9 @@
         "-std=c++17",
         "-fvisibility=hidden",
         "-march=haswell",
-        "-Ofast",
-        "-Wno-unused-function",
-        "-Wno-unused-const-variable"
-      ],
-      "cflags_cc":[
-        "-std=c++17",
-        "-fvisibility=hidden",
-        "-march=haswell",
-        "-Ofast",
+        '-m64',
+        "-mavx2",
+        "-O3",
         "-Wno-unused-function",
         "-Wno-unused-const-variable"
       ]

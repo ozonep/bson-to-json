@@ -4,3 +4,5 @@ build
 benchmark/data.bson
 .vscode
 .idea
+Dockerfile
+.DS_Store
